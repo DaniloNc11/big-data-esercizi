@@ -1,6 +1,7 @@
 import redis
 import boto3
 from botocore.exceptions import ClientError
+from datetime import datetime
 
 r = redis.Redis(host="localhost", port=6379)
 pubsub = r.pubsub()
@@ -15,6 +16,7 @@ s3 = boto3.client(
 
 bucket = "my-bucket"
 filename = "messaggio.txt"
+count = 0
 
 try:
     s3.head_bucket(Bucket=bucket)
@@ -28,6 +30,19 @@ for msg in pubsub.listen():
         text = msg["data"].decode()
         print("Ricevuto:", text)
 
-        #TODO: trasformare il messaggio in upper case
+        # TODO 1: convertire il messaggio in uppercase.
 
-        #TODO: inserire l'oggetto dentro il bucket
+        # TODO 2: creare una variabile dove inserire un numero progressivo (ad ogni iterazione aumenta di 1).
+
+        # TODO 3: creare una variabile per memorizzare un timestamp locale (datetime)
+
+
+        # TODO 4: costruire il messaggio finale.
+        # Deve contenere:
+        # - numero progressivo
+        # - timestamp
+        # - messaggio in uppercase
+        # Formato consigliato:
+        # "3 | 2025-01-01T12:30:00 | MESSAGGIO 1"
+
+        # TODO 5: salvare il messaggio finale su MinIO.

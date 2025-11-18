@@ -1,6 +1,5 @@
 import redis
 import boto3
-import ast
 
 r = redis.Redis(host="localhost", port=6379)
 pubsub = r.pubsub()
@@ -20,20 +19,21 @@ print("In attesa di messaggi...")
 
 for msg in pubsub.listen():
     if msg["type"] == "message":
-        count += 1
-
         raw = msg["data"].decode()
         print("Ricevuto:", raw)
 
-        # TODO 1: convertire la stringa ricevuta in dizionario (cercare su internet).
 
-        # TODO 2: modificare il valore ricevuto 'value' aggiungendo +10.
+        # TODO 0: estrarre la temperatura dal messaggio ricevuto usando split
+        # # Il messaggio ha questo formato: sensor=S1;temp=55;power=3.2;time=...
+        # # Obiettivo: prendere solo il numero della temperatura.
 
-        # TODO 3: ricreare una stringa dal dizionario modificato (cercare su internet).
+        # TODO 1: usare un if per controllare la temperatura.
+        # Regola:
+        # - se temperatura > 70 -> stampa "Scartato" e NON salvare niente.
+        # - se temperatura <= 70 -> proseguire con il salvataggio.
 
-        # TODO 4: Nome file nuovo per ogni messaggio
+        # TODO 2: trasformare il messaggio in uppercase solo se valido.
 
-        # TODO 4: salvare su MinIO l’oggetto aggiornato.
+        # TODO 3: incrementare il contatore e creare un nome file unico.
 
-
-        print("Salvato:", filename)
+        # TODO 4: salvare il messaggio valido su MinIO usando s3.put_object().

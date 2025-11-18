@@ -1,8 +1,15 @@
 import redis
+import time
 
 r = redis.Redis(host="localhost", port=6379)
 
-message = "Messaggio 1"
-r.publish("demo", message)
+while True:
+    data = {
+        "sensor": "S1",
+        "value": 50
+    }
 
-print("Inviato:", message)
+    message = str(data)
+    r.publish("demo", message)
+    print("Inviato:", message)
+    time.sleep(2)

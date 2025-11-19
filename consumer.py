@@ -19,11 +19,15 @@ count = 0
 print("In attesa di messaggi...")
 
 for msg in pubsub.listen():
-    if msg["type"] == "message":
-        count += 1
-
-        raw = msg["data"].decode()
-        print("Ricevuto:", raw)
+        if msg["type"] == "message":
+                text = msg["data"].decode()
+                text_dict = ast.literal_eval(text)
+                text_dict["value"] += 10
+                text = str(text_dict)
+                count += 1
+                filename = f"file-{count}.txt"
+                s3.put_object(Body=text, Bucket=bucket, Key=filename)
+                print("Ricevuto:", text)
 
         # TODO 1: convertire la stringa ricevuta in dizionario (cercare su internet).
 

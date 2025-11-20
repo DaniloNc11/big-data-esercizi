@@ -1,13 +1,16 @@
 import redis
 import boto3
-import base64
 from botocore.exceptions import ClientError
 from datetime import datetime
+import uuid
 
-r = redis.Redis(host="localhost", port=6379)
+# Redis setup
+r = redis.Redis(host="192.168.7.38", port=6379)
 pubsub = r.pubsub()
 pubsub.subscribe("demo")
+print("Subscriber connesso a Redis su 192.168.7.38, canale 'demo'.")
 
+# MinIO setup
 s3 = boto3.client(
     "s3",
     endpoint_url="http://192.168.7.38:9000",
@@ -15,51 +18,43 @@ s3 = boto3.client(
     aws_secret_access_key="admin123"
 )
 
-uuid = __import__('uuid')
 bucket = "my-bucket"
-<<<<<<< Updated upstream
-filename = "messaggio.txt"
-count = 0
-=======
-filename = "cyberchallenge.zip"
-uuidkey = str(uuid.uuid4()) + ".zip"
->>>>>>> Stashed changes
 
+# Verifica o crea il bucket
 try:
     s3.head_bucket(Bucket=bucket)
+    print(f"Bucket '{bucket}' trovato.")
 except ClientError:
     s3.create_bucket(Bucket=bucket)
+    print(f"Bucket '{bucket}' creato.")
 
 print("In attesa di messaggi...")
 
+count = 0  # Contatore progressivo
+
 for msg in pubsub.listen():
     if msg["type"] == "message":
-<<<<<<< Updated upstream
-        text = msg["data"].decode()
-        print("Ricevuto:", text)
+        raw_data = msg["data"].decode("utf-8")
+        print("Ricevuto:", raw_data)
 
-        # TODO 1: convertire il messaggio in uppercase.
+        # Uppercase
+        upper_text = raw_data.upper()
 
-        # TODO 2: creare una variabile dove inserire un numero progressivo (ad ogni iterazione aumenta di 1).
+        # Numero progressivo
+        count += 1
 
-        # TODO 3: creare una variabile per memorizzare un timestamp locale (datetime)
+        # Timestamp locale
+        timestamp = datetime.now().isoformat(timespec="seconds")
 
+        # Messaggio finale
+        final_message = f"{count} | {timestamp} | {upper_text}"
+        print("Messaggio finale:", final_message)
 
-        # TODO 4: costruire il messaggio finale.
-        # Deve contenere:
-        # - numero progressivo
-        # - timestamp
-        # - messaggio in uppercase
-        # Formato consigliato:
-        # "3 | 2025-01-01T12:30:00 | MESSAGGIO 1"
-
-        # TODO 5: salvare il messaggio finale su MinIO.
-=======
-        encoded = msg["data"].decode()
+        # Salvataggio su MinIO
         try:
-            file_bytes = base64.b64decode(encoded)
+            file_bytes = final_message.encode("utf-8")
+            uuidkey = f"{uuid.uuid4()}.txt"
             s3.put_object(Bucket=bucket, Key=uuidkey, Body=file_bytes)
-            print(f"Caricato '{filename}' nel bucket '{bucket}' come oggetto '{uuidkey}'")
+            print(f"✅ Caricato su MinIO come '{uuidkey}'")
         except Exception as e:
-            print("Errore nella decodifica o nel caricamento:", e)
->>>>>>> Stashed changes
+            print("❌ Errore nel caricamento su MinIO:", e)

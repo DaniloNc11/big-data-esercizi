@@ -1,15 +1,12 @@
 import redis
-import base64
 
-# Connessione a Redis
-r = redis.Redis(host="localhost", port=6379)
+# Connessione a Redis (stesso IP del subscriber)
+r = redis.Redis(host="192.168.7.38", port=6379)
 
-# Leggi e codifica il file
-with open("C:\\Users\\A829apulia\\Desktop\\Cyberchallenge.zip", "rb") as f:
-    file_bytes = f.read()
-    encoded = base64.b64encode(file_bytes).decode()
+# Messaggio da inviare
+messaggio = "jrutj://fhntwsai11.kkriys.kv/Cjmieilcjmieil | chiave: CYBERCHALLENGE"
 
-# Pubblica il messaggio codificato
-r.publish("demo", encoded)
+# Pubblica il messaggio sul canale "demo"
+r.publish("demo", messaggio)
 
-print("Inviato: cyberchallenge.zip codificato in base64")
+print("✅ Inviato:", messaggio)
